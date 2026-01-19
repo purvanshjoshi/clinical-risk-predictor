@@ -1,152 +1,127 @@
-# 🏆 The Winning Blueprint: Praxis 2.0 Detailed Execution Plan
-**Project**: Clinical Risk Predictor (CRP)
-**Goal**: Win by combining *clinical rigor* with *GenAI empathy*.
+# 🏆 The Master Blueprint: Clinical Risk Predictor (Enterprise Edition)
+**Vision**: From Hackathon Winner to Real-World Clinical SaaS.
+**Philosophy**: "Hackathon Speed, Enterprise Quality."
 
 ---
 
-## 💎 The Core Innovation: "Risk-Reason-Reassure"
-We are not just predicting risk; we are managing it.
-1.  **Risk**: Calibrated probabilities + Uncertainty Bounds.
-2.  **Reason**: Counterfactuals ("What if I lose weight?") + SHAP explanations.
-3.  **Reassure**: Empathetic, culturally aware patient communication.
+## 🏛️ 1. Enterprise Architecture
+We are building a **Modular Monolith** (perfect for speed now, scalable to Microservices later).
+
+### 1.1 Tech Stack (Production Grade)
+*   **Backend**: FastAPI (Python) - Async, efficient, auto-docs.
+*   **Database**: PostgreSQL (via Supabase or local Docker) - *Replaces CSV*.
+*   **ORM**: SQLAlchemy + Pydantic (Strong logical data modeling).
+*   **ML Engine**: Scikit-Learn / XGBoost + **MLflow** (for model versioning).
+*   **Frontend**: React (Vite) + TypeScript + **TanStack Query** (State Mgmt).
+*   **Auth**: JWT (JSON Web Tokens) with Role-Based Access Control (RBAC: Doctor vs. Admin).
+*   **Infrastructure**: Docker + Docker Compose.
+
+### 1.2 System Context Diagram
+`[Frontend SPA]` <--> `[AGI API Gateway]` <--> `[ML Inference Service]`
+                                      |
+                                  `[PostgreSQL DB]`
 
 ---
 
-## 📅 Phase 1: The Robust ML Core (Days 1-2)
-*Goal: A production-grade API serving calibrated risk scores and explanations.*
+## 🧠 2. Advanced ML & Data Pipeline
+*Goal: Reproducible, versioned, and audit-ready AI.*
 
-### Step 1.1: Advanced Data Pipeline
-**File**: `ml-research/train.py`
-1.  **Ingestion**: Load `diabetes_dataset.csv`.
-2.  **Cleaning**:
-    *   Replace `0` values in columns like `Glucose`, `BloodPressure`, `SkinThickness`, `Insulin`, `BMI` with `NaN`.
-    *   Impute `NaN` using `SimpleImputer(strategy='median')` (robust to outliers).
-3.  **Feature Engineering**:
-    *   Create `BMI_Age_Interaction = BMI * Age` (common clinical risk multiplier).
-    *   Standardize features using `StandardScaler` for linear models (keep original for Trees).
-4.  **Splitting**: 80/20 stratified split (`stratify=y` is crucial for medical data).
+### 2.1 MLOps Workflow (`ml-research/`)
+1.  **Data Versioning**: Track datasets using `dvc` (or simple hash checks).
+2.  **Experiment Tracking**: Log every training run (metrics, params) to a local MLflow server.
+    *   *Why?* Proven rigor. "We tried 50 models, this one won."
+3.  **Model Registry**: Save the best model as `production` tag.
 
-### Step 1.2: Model Training & Calibration
-**File**: `backend/models/risk_model.py`
-1.  **Algorithm**: XGBoost (`XGBClassifier`) - proven winner for tabular data.
-2.  **Calibration**: Wrap the model in `CalibratedClassifierCV(method='isotonic')`.
-    *   *Why?* The hackathon judges will check if "70% risk" actually means 70% probability.
-3.  **Persistence**: Save the pipeline (Scaler + Imputer + Model) using `joblib` to `backend/models/pipeline.pkl`.
-
-### Step 1.3: Explainability Engine (SHAP)
-**File**: `backend/models/explainability.py`
-1.  **KernelExplainer**: Since we use a pipeline, use `shap.KernelExplainer` or `shap.TreeExplainer` on the inner model.
-2.  **Output Format**: Return a list of `{"feature": "BMI", "impact": +12.5, "description": "Increases risk"}`.
-3.  **Optimization**: Calculate SHAP values for the test set *once* and cache the base value.
-
-### Step 1.4: FastAPI Backend Construction
-**File**: `backend/app.py`, `backend/routes/predict.py`
-1.  **Pydantic Schema**: Define `PatientData` with validation (e.g., `age: int = Field(..., gt=0, lt=120)`).
-2.  **Endpoint**: `POST /api/v1/predict`
-    *   **Input**: JSON Patient Data.
-    *   **Output JSON**:
-        ```json
-        {
-          "risk_score": 0.76,
-          "risk_tier": "High",
-          "uncertainty_range": [0.71, 0.81],
-          "top_drivers": [{"factor": "BMI", "value": 32.1, "contribution": "high"}]
-        }
-        ```
+### 2.2 The "Clinical Brain" Model
+*   **Ensemble Strategy**: Don't just rely on XGBoost.
+    *   *Model A*: Logistic Regression (High explainability baseline).
+    *   *Model B*: XGBoost (High performance).
+    *   *Meta-Learner*: Weighted average based on confidence.
+*   **Calibration**: Essential. Use `CalibratedClassifierCV`.
+*   **Drift Detection**: Implement a basic check: "Is input Age distribution shifting?"
 
 ---
 
-## 🎨 Phase 2: The "Wow" Frontend (Days 3-5)
-*Goal: A dashboard that looks like a Series-A startup product.*
+## 🛡️ 3. Security & Compliance (HIPAA-Ready)
+*Goal: Show we understand medical data privacy.*
 
-### Step 2.1: Project Setup
-1.  **Stack**: React + TypeScript + Vite.
-2.  **Styling**: Tailwind CSS.
-3.  **Components**: Use **Radix UI** or **ShadCN/UI** for accessible, unstyled primitives (Dialogs, Sliders).
+### 3.1 Authentication & RBAC
+*   **Login Flow**: `/auth/login` returns a detailed JWT.
+*   **Roles**:
+    *   `clinician`: Can view patients, run predictions.
+    *   `researcher`: Can view anonymized cohort statistics.
+    *   `patient`: Can only view *own* simple report.
 
-### Step 2.2: The "Time Machine" Interface (The Killer Feature)
-**Component**: `frontend/src/components/Clinician/RiskScenario.tsx`
-1.  **The Concept**: A sidebar with sliders for Modifiable Factors (Weight, Glucose, Activity).
-2.  **Interaction**:
-    *   User drags "Weight" slider from 95kg -> 90kg.
-    *   Frontend *debounces* input (wait 300ms).
-    *   Sends new values to `POST /predict`.
-    *   **Visual**: A Line Chart shows the "Current Risk" dot moving down to a "Projected Risk" dot.
-    *   **Animation**: Use `framer-motion` to animate the transition smoothly.
-
-### Step 2.3: The Clinician Dashboard
-**Component**: `frontend/src/components/Clinician/RiskDashboard.tsx`
-1.  **Layout**: Bento Grid layout (CSS Grid).
-2.  **Key Cards**:
-    *   **Patient Vitals**: Big, bold numbers.
-    *   **Risk Gauge**: A semi-circle gauge (Red/Yellow/Green). Use `recharts`.
-    *   **Driver Analysis**: Horizontal bar chart sorted by SHAP impact.
-
-### Step 2.4: The Patient Portal
-**Component**: `frontend/src/components/Patient/SimpleReport.tsx`
-1.  **Design Philosophy**: "No scary numbers".
-2.  **UI**:
-    *   Use Assessment scales: "Good", "Needs Attention", "Action Required".
-    *   Use Icons: 🍎 (Food), 🏃 (Activity), 💊 (Meds).
-    *   **Language Toggle**: A simple switch for English/Hindi.
+### 3.2 Data Anonymization
+*   **PII Masking**: Never send "Name" or "SSN" to the ML model. Send only "ID".
+*   **Audit Logging**: Every API access to `/predict` is logged to a secure table: `[Timestamp, UserID, PatientID, Action]`.
 
 ---
 
-## 🧠 Phase 3: GenAI Integration (Days 6-7)
-*Goal: Turning data into empathy and logic.*
+## 💻 4. Scalable Frontend Engineering
+*Goal: A UI that handles thousands of patients.*
 
-### Step 3.1: The "Dual-Persona" Prompt Engineering
-**File**: `backend/models/genai.py`
-1.  **System Prompt (Doctor)**:
-    *   *"You are an expert Endocrinologist. Analyze the provided risk drivers. Suggest 3 specific clinical interventions based on ADA guidelines. Be concise. Use medical terminology."*
-2.  **System Prompt (Patient)**:
-    *   *"You are a compassionate health coach. The patient has {risk_level} risk. Explain their risk using a simple analogy (e.g., a car engine). Suggest 2 easy lifestyle changes. Tone: Encouraging, non-judgmental. Language: {selected_language}."*
+### 4.1 "Atomic" Design System
+*   **Atoms**: Buttons, Inputs, Labels (Tailwind + CVA - Class Variance Authority).
+*   **Molecules**: SearchBar, UserCard.
+*   **Organisms**: RiskDashboard, PatientTable.
+*   **Templates**: DashboardLayout.
 
-### Step 3.2: Retrieval Augmented Generation (Mini-RAG)
-*   **Context**: embed a small text chunk of "ADA Standards of Care" into the prompt context so the AI doesn't hallucinate treatments.
+### 4.2 State Management
+*   **Server State**: Use `TanStack Query` (React Query) for data fetching. It handles huge feature: **Caching** (Don't re-fetch patient data if not changed).
+*   **Client State**: `Zustand` for simple UI state (e.g., Sidebar open/close).
 
-### Step 3.3: The "Explain" Endpoint
-**Endpoint**: `POST /api/v1/explain`
-*   Input: `{"patient_data": ..., "risk_score": ..., "persona": "patient"}`.
-*   Output: Streaming text response (for real-time typing effect).
-
----
-
-## �️ Phase 4: Polish, Safety & Demo (Days 8-10)
-*Goal: Winning the judges' trust.*
-
-### Step 4.1: Fairness & Ethics Check
-1.  **Bias Check Script**: Run the model on subsets (e.g., Age > 60 vs Age < 30) and report False Positive Rate parity.
-2.  **Disclaimer UI**: Add a persistent footer: *"AI Support Tool - Not a Diagnosis. Physician validation required."*
-
-### Step 4.2: Performance Optimization
-1.  **Frontend**: Use `React.memo` to prevent re-renders of the heavy charts.
-2.  **Backend**: Cache SHAP explanations using `@lru_cache` or Redis if needed (likely overkill, simple memory cache is fine).
-
-### Step 4.3: The Demo Script Rehearsal
-1.  **Narrative**: "Meet Rahul. He's 45..." (Storytelling).
-2.  **The "Ah-ha" Moment**: Drag the slider. "See? If Rahul walks 20 mins a day, his risk drops 15%."
-3.  **The GenAI Flex**: "Rahul speaks Hindi." -> Click 'Translate'. -> Show Hindi output.
+### 4.3 The "Time Machine" 2.0
+*   **Real-time Simulation**: run inference *in the browser* (via ONNX runtime) for instant feedback on slider drags? OR keep it optimistic API updates. *Decision: Optimistic API for robustness.*
+*   **Visuals**: Use `Airbnb's Visx` or `Tremor` for medical-grade charts.
 
 ---
 
-## ✅ Implementation Checklist (The "Cheat Sheet")
+## 🤖 5. GenAI: The "Reasoning Engine"
+*Goal: Moving beyond text generation to Clinical Reasoning.*
 
-**Backend**
-- [ ] `pandas` cleanup script
-- [ ] `XGBoost` + `CalibratedClassifierCV`
-- [ ] `SHAP` explainer setup
-- [ ] `FastAPI` routes
-- [ ] `Gemini` API key integration
+### 5.1 Chain-of-Thought (CoT) Prompting
+Instead of asking for a result, force the LLM to think:
+1.  *Identify* abnormal biomarkers.
+2.  *Correlate* with comorbidities.
+3.  *Reference* guidelines (ADA/AHA).
+4.  *Formulate* recommendation.
+*This trace is saved and shown to the doctor for validation.*
 
-**Frontend**
-- [ ] Tailwind Config (Colors: Emerald-500 for good, Rose-500 for bad)
-- [ ] `Recharts` Radar Chart for risk factors
-- [ ] `Framer Motion` for page transitions
-- [ ] `Axios` wrapper for API calls
+### 5.2 FHIR Interoperability (The "Killer" Feature)
+*   Design the API to input/output data in **FHIR (Fast Healthcare Interoperability Resources)** JSON format.
+*   *Why?* It proves this can plug into real hospital systems (Epic/Cerner).
 
-**Docs**
-- [ ] Screenshots of "Before/After" slider
-- [ ] Diagram of the "Risk-Reason" pipeline
+---
 
-Let's execute this. Precision wins.
+## 📝 Detailed Execution Steps
+
+### Phase 1: Foundation (Days 1-2)
+- [ ] **Docker**: Setup `docker-compose.yml` (App + DB + MLflow).
+- [ ] **DB Schema**: Design SQL tables (`patients`, `predictions`, `audit_logs`).
+- [ ] **Base API**: FastAPI + SQLAlchemy connection.
+
+### Phase 2: The ML Pipeline (Days 3-5)
+- [ ] **Training Implementation**: Write `train.py` with MLflow logging.
+- [ ] **API Inference**: Load model from MLflow registry.
+- [ ] **SHAP Integration**: Optimize calculation speed.
+
+### Phase 3: The Application (Days 6-9)
+- [ ] **Auth System**: Implement JWT login.
+- [ ] **Dashboard**: Build the Patient List and Detail View.
+- [ ] **The Simulator**: Build the Interactive Risk Slider.
+
+### Phase 4: Enterprise Polish (Days 10-12)
+- [ ] **Testing**: Write `pytest` for backend, `Vitest` for frontend.
+- [ ] **Swagger Docs**: Polish the `/docs` page with examples.
+- [ ] **Demo Data**: Seed the DB with 50 realistic synthetic patients.
+- [ ] **Video**: Emphasize "Scalability" and "Security" in the pitch.
+
+---
+
+## 🌟 How to Win Big
+1.  **Show the Code Structure**: In the demo, briefly flash the folder structure. "We separated concerns for scalability."
+2.  **Audit Logs**: Show the "Security Log" screen. Judges love this.
+3.  **FHIR Compatibility**: Mention this password. It separates students from pros.
+
+**Let's build the future of Clinical AI.**
