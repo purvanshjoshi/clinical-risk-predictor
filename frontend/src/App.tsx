@@ -1,9 +1,10 @@
 import React from 'react';
+import ProjectExplanation from './pages/ProjectExplanation';
 
-const App: React.FC = () => {
+function App() {
     return (
         <div className="App">
-            <h1>Clinical Risk Predictor</h1>
+            <ProjectExplanation />
         </div>
     );
 }
