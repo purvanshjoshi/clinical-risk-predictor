@@ -4,9 +4,9 @@
 - [x] **Data Pipeline**: Clean `diabetes_dataset.csv`, handle missing values, and split data.
 - [x] **Model Training**: Train XGBoost/Logistic Regression with probability calibration.
 - [x] **Explainability**: Implement SHAP (SHapley Additive exPlanations) for local interpretation.
-- [ ] **FastAPI Backend**:
-    - [ ] Setup `POST /predict` for real-time risk scoring.
-    - [ ] Setup `POST /explain` for GenAI reasoning.
+- [x] **FastAPI Backend**:
+    - [x] Setup `POST /predict` for real-time risk scoring.
+    - [x] Setup `POST /explain` for GenAI reasoning.
 - [ ] **Unit Testing**: Add tests for model inference and API endpoints.
 
 ## Phase 2: The "Wow" Frontend (UX & Design)
