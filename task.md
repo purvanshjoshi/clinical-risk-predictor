@@ -1,9 +1,9 @@
 # 📝 Project Tasks: Path to Winning Praxis 2.0
 
 ## Phase 1: The Robust Core (ML & Backend)
-- [ ] **Data Pipeline**: Clean `diabetes_dataset.csv`, handle missing values, and split data.
-- [ ] **Model Training**: Train XGBoost/Logistic Regression with probability calibration.
-- [ ] **Explainability**: Implement SHAP (SHapley Additive exPlanations) for local interpretation.
+- [x] **Data Pipeline**: Clean `diabetes_dataset.csv`, handle missing values, and split data.
+- [x] **Model Training**: Train XGBoost/Logistic Regression with probability calibration.
+- [x] **Explainability**: Implement SHAP (SHapley Additive exPlanations) for local interpretation.
 - [ ] **FastAPI Backend**:
     - [ ] Setup `POST /predict` for real-time risk scoring.
     - [ ] Setup `POST /explain` for GenAI reasoning.
