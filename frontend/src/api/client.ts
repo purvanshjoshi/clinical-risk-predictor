@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://localhost:8001';
 
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
@@ -75,5 +75,13 @@ export const simulateRisk = async (
         patient,
         modifications
     });
+    return response.data;
+};
+export interface ReportResponse {
+    report: string;
+}
+
+export const generateReport = async (patient: PredictionInput): Promise<ReportResponse> => {
+    const response = await apiClient.post<ReportResponse>('/report', patient);
     return response.data;
 };

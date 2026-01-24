@@ -3,15 +3,16 @@ version: '3.8'
 services:
   backend:
     build: 
-      context: ./backend
+      context: .
+      dockerfile: backend/Dockerfile
     ports:
-      - "8000:8000"
+      - "8001:8001"
     volumes:
-      - ./backend:/app
-      - /app/__pycache__
+      - ./backend:/app/backend
+      - ./data:/app/data
     environment:
       - PYTHONUNBUFFERED=1
-    command: uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn backend.api:app --host 0.0.0.0 --port 8001 --reload
 
   frontend:
     build:

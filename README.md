@@ -250,8 +250,8 @@ cd backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn api:app --reload --port 8000
-# Server runs on http://localhost:8000
+uvicorn backend.api:app --reload --port 8001
+# Server runs on http://localhost:8001
 ```
 
 ### Frontend Setup
@@ -275,7 +275,7 @@ You can run the full stack with a single command:
 docker-compose up --build
 ```
 - **Frontend**: http://localhost:3000
-- **Backend**: http://localhost:8000
+- **Backend**: http://localhost:8001
 
 ---
 
@@ -296,12 +296,17 @@ docker-compose up --build
 - Interactive "what-if" scenarios
 - Modifiable vs. non-modifiable factors
 
-### 4. Personalization
+### 4. Personalization & AI Reports
 - Clinician view: Technical, detailed, filtereable
-- Patient view: Simple, visual, non-alarming
+- AI Clinical Summaries: Natural language reports via local LLM
 - Suggested actions based on risk tier
 
-### 5. Safety & Guardrails
+### 5. What-If Simulation
+- Interactive sliders to modify patient vitals (e.g. Glucose, BMI)
+- Real-time visualization of risk reduction logic
+- Powered by counterfactual reasoning
+
+### 6. Safety & Guardrails
 - Bias detection by demographic groups
 - Model uncertainty estimates
 - Clinical validation checks

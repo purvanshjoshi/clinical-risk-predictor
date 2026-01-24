@@ -17,9 +17,8 @@ RUN apt-get update && apt-get install -y \
 # Copy the current directory contents into the container at /app
 COPY . .
 
-# Make port 8000 available to the world outside this container
-EXPOSE 8000
+# Make port 8001 available to the world outside this container
+EXPOSE 8001
 
-# Run app.py when the container launches
-# Assuming api.py is the main entry point as per previous context
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run api.py when the container launches
+CMD ["uvicorn", "backend.api:app", "--host", "0.0.0.0", "--port", "8001"]

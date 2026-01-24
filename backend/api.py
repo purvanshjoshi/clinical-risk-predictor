@@ -10,6 +10,9 @@ sys.path.append(os.getcwd())
 
 from backend.models.risk_engine import RiskEngine
 from backend.models.counterfactuals import Counterfactuals
+from backend.models.llm_engine import LLMEngine
+
+from backend.models.history_engine import HistoryEngine
 
 # 1. Initialize App
 app = FastAPI(title="Clinical Risk Predictor API", version="1.0")
@@ -31,6 +34,22 @@ except Exception as e:
     print(f"Error loading Risk Engine: {e}")
     risk_engine = None
 
+# Initialize LLM Engine
+try:
+    llm_engine = LLMEngine() # Defaults to localhost:11434
+    print("LLM Engine initialized.")
+except Exception as e:
+    print(f"Error initializing LLM Engine: {e}")
+    llm_engine = None
+
+# Initialize History Engine
+try:
+    history_engine = HistoryEngine()
+    print("History Engine initialized.")
+except Exception as e:
+    print(f"Error initializing History Engine: {e}")
+    history_engine = None
+
 # 4. Data Models
 class PatientRequest(BaseModel):
     gender: str
@@ -41,13 +60,16 @@ class PatientRequest(BaseModel):
     bmi: float
     HbA1c_level: float
     blood_glucose_level: float
-
+    
 class RiskResponse(BaseModel):
     risk_score: float
     risk_level: str
 
 class ExplanationResponse(BaseModel):
     explanations: List[Dict[str, Any]]
+
+class ReportResponse(BaseModel):
+    report: str
 
 # 5. Helper Functions
 def get_risk_level(score: float) -> str:
@@ -75,9 +97,24 @@ def predict_risk(patient: PatientRequest):
         data = patient.dict()
         score = risk_engine.predict_risk(data)
         level = get_risk_level(score)
+        
+        # Save to history
+        if history_engine:
+            try:
+                history_engine.save_record(data, score, level)
+            except Exception as hist_e:
+                print(f"Warning: Failed to save history: {hist_e}")
+
         return {"risk_score": score, "risk_level": level}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/history")
+def get_history(limit: int = 10):
+    if history_engine is None:
+        raise HTTPException(status_code=503, detail="History Engine not ready")
+    return history_engine.get_history(limit)
+
 
 @app.post("/explain", response_model=ExplanationResponse)
 def explain_risk(patient: PatientRequest):
@@ -120,6 +157,22 @@ def simulate_risk(request: SimulationRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/report", response_model=ReportResponse)
+def generate_report(patient: PatientRequest):
+    if risk_engine is None or llm_engine is None:
+        raise HTTPException(status_code=503, detail="Services not ready")
+    
+    try:
+        data = patient.dict()
+        score = risk_engine.predict_risk(data)
+        level = get_risk_level(score)
+        explanations = risk_engine.explain_risk(data)
+        
+        report = llm_engine.generate_report(data, score, level, explanations)
+        return {"report": report}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

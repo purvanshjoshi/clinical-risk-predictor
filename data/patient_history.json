@@ -1,0 +1,19 @@
+[
+    {
+        "timestamp": "2026-01-23T20:27:08.674792",
+        "patient_data": {
+            "gender": "Female",
+            "age": 45.0,
+            "hypertension": 0,
+            "heart_disease": 0,
+            "smoking_history": "never",
+            "bmi": 24.5,
+            "HbA1c_level": 5.5,
+            "blood_glucose_level": 100.0
+        },
+        "risk_assessment": {
+            "score": 0.011712356753625882,
+            "level": "Low"
+        }
+    }
+]

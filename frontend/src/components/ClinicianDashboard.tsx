@@ -2,8 +2,9 @@ import React from 'react';
 import RiskGauge from './RiskGauge';
 import ShapExplainer from './ShapExplainer';
 import SimulationDashboard from './SimulationDashboard';
-import { type PredictionResponse } from '../api/client';
-import { RefreshCcw } from 'lucide-react';
+import { type PredictionResponse, generateReport } from '../api/client';
+import { RefreshCcw, FileText, Cpu, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface ClinicianDashboardProps {
     prediction: PredictionResponse;
@@ -11,6 +12,25 @@ interface ClinicianDashboardProps {
 }
 
 const ClinicianDashboard: React.FC<ClinicianDashboardProps> = ({ prediction, onReset }) => {
+    const [report, setReport] = useState<string | null>(null);
+    const [loadingReport, setLoadingReport] = useState(false);
+
+    const handleGenerateReport = async () => {
+        setLoadingReport(true);
+        try {
+            // Need to cast prediction back to input format or just ignore extra fields (api handles extra)
+            const inputData: any = { ...prediction };
+            // Remove derived fields if necessary, but backend Pydantic should ignore extras
+            const result = await generateReport(inputData);
+            setReport(result.report);
+        } catch (error) {
+            console.error("Failed to generate report:", error);
+            setReport("Error: Could not generate report. Please ensure local LLM is running.");
+        } finally {
+            setLoadingReport(false);
+        }
+    };
+
     return (
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in-up">
             <div className="flex justify-between items-center mb-6">
@@ -35,6 +55,43 @@ const ClinicianDashboard: React.FC<ClinicianDashboardProps> = ({ prediction, onR
                 <div>
                     <ShapExplainer shapValues={prediction.shap_values || {}} />
                 </div>
+            </div>
+
+            {/* Clinical Report Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-100 dark:border-gray-700 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center space-x-2">
+                        <FileText className="text-purple-600 dark:text-purple-400" size={24} />
+                        <h3 className="text-xl font-bold text-gray-800 dark:text-white">AI Clinical Summary</h3>
+                    </div>
+                    <button
+                        onClick={handleGenerateReport}
+                        disabled={loadingReport}
+                        className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {loadingReport ? (
+                            <>
+                                <Loader2 className="animate-spin" size={16} />
+                                <span>Generating...</span>
+                            </>
+                        ) : (
+                            <>
+                                <Cpu size={16} />
+                                <span>Generate Report</span>
+                            </>
+                        )}
+                    </button>
+                </div>
+
+                {report ? (
+                    <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{report}</p>
+                    </div>
+                ) : (
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400 italic">
+                        Click "Generate Report" to get an AI-powered analysis of this patient's risk profile.
+                    </div>
+                )}
             </div>
 
             {/* Simulation Section */}

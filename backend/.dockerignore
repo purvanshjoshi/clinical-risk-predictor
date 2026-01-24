@@ -1,0 +1,11 @@
+__pycache__
+*.pyc
+.git
+.gitignore
+.env
+venv
+node_modules
+dist
+build
+ml-research
+tests
