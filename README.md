@@ -89,13 +89,13 @@ graph TD
     end
     subgraph Backend [FastAPI Backend]
         API[API Endpoints]
-        RiskEng[Risk Engine (XGBoost)]
-        SHAP[SHAP Explainer]
+        RiskEng["Risk Engine (XGBoost)"]
+        SHAP["SHAP Explainer"]
         subgraph EmbeddedAI [Embedded AI]
-           GPT4All[GPT4All Engine]
-           BioMistral[BioMistral-7B Model]
+           GPT4All["GPT4All Engine"]
+           BioMistral["BioMistral-7B Model"]
         end
-        History[History Engine (SQLite)]
+        History["History Engine (SQLite)"]
     end
     
     Client --> UI
@@ -112,7 +112,7 @@ graph TD
 ### Data Flow
 ```mermaid
 flowchart LR
-    User((User)) -->|Input Vitals| Form[Patient Form]
+    User((User)) -->|Input Vitals| Form["Patient Form"]
     Form -->|POST /predict| API[FastAPI]
     API -->|Data| ML[ML Model]
     ML -->|Risk Score| API
