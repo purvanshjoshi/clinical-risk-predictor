@@ -10,7 +10,8 @@ sys.path.append(os.getcwd())
 
 from backend.models.risk_engine import RiskEngine
 from backend.models.counterfactuals import Counterfactuals
-from backend.models.llm_engine import LLMEngine
+# from backend.models.llm_engine import LLMEngine # Deprecated
+from backend.models.clinical_llm import ClinicalLLM
 
 from backend.models.history_engine import HistoryEngine
 
@@ -34,13 +35,14 @@ except Exception as e:
     print(f"Error loading Risk Engine: {e}")
     risk_engine = None
 
-# Initialize LLM Engine
+# Initialize Clinical LLM (Embedded)
 try:
-    llm_engine = LLMEngine() # Defaults to localhost:11434
-    print("LLM Engine initialized.")
+    # This will trigger the download on first run!
+    clinical_llm = ClinicalLLM()
+    print("Clinical LLM initialized.")
 except Exception as e:
-    print(f"Error initializing LLM Engine: {e}")
-    llm_engine = None
+    print(f"Error initializing Clinical LLM: {e}")
+    clinical_llm = None
 
 # Initialize History Engine
 try:
@@ -159,8 +161,12 @@ def simulate_risk(request: SimulationRequest):
 
 @app.post("/report", response_model=ReportResponse)
 def generate_report(patient: PatientRequest):
-    if risk_engine is None or llm_engine is None:
-        raise HTTPException(status_code=503, detail="Services not ready")
+    if risk_engine is None:
+        raise HTTPException(status_code=503, detail="Risk Engine not ready")
+    if clinical_llm is None:
+         raise HTTPException(status_code=503, detail="Clinical LLM failed to load. Check server logs.")
+    if clinical_llm.model is None:
+         raise HTTPException(status_code=503, detail="Clinical LLM model not loaded (possibly downloading...). Check server console.")
     
     try:
         data = patient.dict()
@@ -168,7 +174,7 @@ def generate_report(patient: PatientRequest):
         level = get_risk_level(score)
         explanations = risk_engine.explain_risk(data)
         
-        report = llm_engine.generate_report(data, score, level, explanations)
+        report = clinical_llm.generate_report(data, score, level, explanations)
         return {"report": report}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

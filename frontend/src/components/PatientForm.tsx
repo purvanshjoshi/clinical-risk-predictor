@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { predictRisk, type PredictionInput, type PredictionResponse } from '../api/client';
-import { Loader2, Activity, Heart, Cigarette, Scale, Droplets } from 'lucide-react';
+import { Loader2, Activity, Cigarette } from 'lucide-react';
 
 interface PatientFormProps {
-    onPredictionSuccess: (data: PredictionResponse) => void;
+    onPredictionSuccess: (data: PredictionResponse, inputData: PredictionInput) => void;
 }
 
 const PatientForm: React.FC<PatientFormProps> = ({ onPredictionSuccess }) => {
@@ -28,7 +28,7 @@ const PatientForm: React.FC<PatientFormProps> = ({ onPredictionSuccess }) => {
             };
 
             const result = await predictRisk(payload);
-            onPredictionSuccess(result);
+            onPredictionSuccess(result, payload);
         } catch (err) {
             console.error(err);
             setError("Failed to get prediction. Ensure backend is running.");

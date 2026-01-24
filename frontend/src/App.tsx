@@ -1,11 +1,17 @@
 import { useState } from 'react';
 import PatientForm from './components/PatientForm';
 import ClinicianDashboard from './components/ClinicianDashboard';
-import { type PredictionResponse } from './api/client';
+import { type PredictionResponse, type PredictionInput } from './api/client';
 import { Activity } from 'lucide-react';
 
 function App() {
   const [predictionData, setPredictionData] = useState<PredictionResponse | null>(null);
+  const [patientData, setPatientData] = useState<PredictionInput | null>(null);
+
+  const handlePredictionSuccess = (data: PredictionResponse, input: PredictionInput) => {
+    setPredictionData(data);
+    setPatientData(input);
+  };
 
 
   return (
@@ -30,7 +36,7 @@ function App() {
           {/* Left Column: Input Form */}
           <div className="lg:col-span-4 xl:col-span-3">
             <div className="sticky top-24">
-              <PatientForm onPredictionSuccess={setPredictionData} />
+              <PatientForm onPredictionSuccess={handlePredictionSuccess} />
             </div>
           </div>
 
@@ -39,7 +45,8 @@ function App() {
             {predictionData ? (
               <ClinicianDashboard
                 prediction={predictionData}
-                onReset={() => setPredictionData(null)}
+                patientInput={patientData!}
+                onReset={() => { setPredictionData(null); setPatientData(null); }}
               />
             ) : (
               <div className="flex flex-col items-center justify-center h-[600px] bg-white dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 p-8 text-center">

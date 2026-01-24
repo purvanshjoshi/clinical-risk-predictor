@@ -8,7 +8,8 @@
     - [x] `POST /predict` (Risk Scoring)
     - [x] `POST /explain` (SHAP)
     - [x] `POST /simulate` (Type-2 Counterfactuals)
-    - [x] `POST /report` (LLM Integration)
+    - [x] `POST /simulate` (Type-2 Counterfactuals)
+    - [x] `POST /report` (Embedded BioMistral LLM)
 
 ## Phase 2: The "Wow" Frontend (UX & Design)
 - [x] **Design System**: Tailwind CSS + Framer Motion.

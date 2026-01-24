@@ -77,6 +77,80 @@ Clinical Risk Predictor is a full-stack AI/ML application designed for real-worl
 
 ---
 
+## 🏗️ System Architecture
+
+### High-Level Architecture
+```mermaid
+graph TD
+    Client[Client Browser]
+    subgraph Frontend [React Frontend]
+        UI[Clinician Dashboard]
+        API_Client[API Client]
+    end
+    subgraph Backend [FastAPI Backend]
+        API[API Endpoints]
+        RiskEng[Risk Engine (XGBoost)]
+        SHAP[SHAP Explainer]
+        subgraph EmbeddedAI [Embedded AI]
+           GPT4All[GPT4All Engine]
+           BioMistral[BioMistral-7B Model]
+        end
+        History[History Engine (SQLite)]
+    end
+    
+    Client --> UI
+    UI --> API_Client
+    API_Client -->|JSON| API
+    API --> RiskEng
+    RiskEng --> SHAP
+    API --> EmbeddedAI
+    EmbeddedAI --> GPT4All
+    GPT4All --> BioMistral
+    API --> History
+```
+
+### Data Flow
+```mermaid
+flowchart LR
+    User((User)) -->|Input Vitals| Form[Patient Form]
+    Form -->|POST /predict| API[FastAPI]
+    API -->|Data| ML[ML Model]
+    ML -->|Risk Score| API
+    ML -->|SHAP Values| API
+    API -->|Risk + Drivers| Dashboard[Dashboard]
+    User -->|Click Generate| Dashboard
+    Dashboard -->|POST /report| API
+    API -->|Patient Profile + Risk| LLM[BioMistral LLM]
+    LLM -->|Clinical Summary| API
+    API -->|Report| Dashboard
+```
+
+### Interaction Sequence
+```mermaid
+sequenceDiagram
+    participant U as Clinician
+    participant F as Frontend
+    participant B as Backend
+    participant M as ML Model
+    participant L as BioMistral AI
+    
+    U->>F: Enters Patient Data
+    F->>B: POST /predict
+    B->>M: Predict Risk & Explain
+    M-->>B: Risk Score, SHAP Values
+    B-->>F: Return Prediction Results
+    F-->>U: Display Risk Gauge & Charts
+    
+    U->>F: Click "Generate Report"
+    F->>B: POST /report (w/ Vitals)
+    B->>L: Generate Clinical Summary
+    L-->>B: Return Natural Language Text
+    B-->>F: Return Report JSON
+    F-->>U: Display AI Report
+```
+
+---
+
 ## 📁 Project Structure
 
 ```

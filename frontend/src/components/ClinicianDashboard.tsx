@@ -2,26 +2,25 @@ import React from 'react';
 import RiskGauge from './RiskGauge';
 import ShapExplainer from './ShapExplainer';
 import SimulationDashboard from './SimulationDashboard';
-import { type PredictionResponse, generateReport } from '../api/client';
+import { type PredictionResponse, type PredictionInput, generateReport } from '../api/client';
 import { RefreshCcw, FileText, Cpu, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface ClinicianDashboardProps {
     prediction: PredictionResponse;
+    patientInput: PredictionInput;
     onReset: () => void;
 }
 
-const ClinicianDashboard: React.FC<ClinicianDashboardProps> = ({ prediction, onReset }) => {
+const ClinicianDashboard: React.FC<ClinicianDashboardProps> = ({ prediction, patientInput, onReset }) => {
     const [report, setReport] = useState<string | null>(null);
     const [loadingReport, setLoadingReport] = useState(false);
 
     const handleGenerateReport = async () => {
         setLoadingReport(true);
         try {
-            // Need to cast prediction back to input format or just ignore extra fields (api handles extra)
-            const inputData: any = { ...prediction };
-            // Remove derived fields if necessary, but backend Pydantic should ignore extras
-            const result = await generateReport(inputData);
+            // Use the authoritative patient input data for the report
+            const result = await generateReport(patientInput);
             setReport(result.report);
         } catch (error) {
             console.error("Failed to generate report:", error);
@@ -72,7 +71,7 @@ const ClinicianDashboard: React.FC<ClinicianDashboardProps> = ({ prediction, onR
                         {loadingReport ? (
                             <>
                                 <Loader2 className="animate-spin" size={16} />
-                                <span>Generating...</span>
+                                <span>Generating with BioMistral...</span>
                             </>
                         ) : (
                             <>

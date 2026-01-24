@@ -15,5 +15,73 @@
             "score": 0.011712356753625882,
             "level": "Low"
         }
+    },
+    {
+        "timestamp": "2026-01-24T14:11:19.277255",
+        "patient_data": {
+            "gender": "Female",
+            "age": 45.0,
+            "hypertension": 0,
+            "heart_disease": 0,
+            "smoking_history": "never",
+            "bmi": 24.5,
+            "HbA1c_level": 5.5,
+            "blood_glucose_level": 100.0
+        },
+        "risk_assessment": {
+            "score": 0.011712356753625882,
+            "level": "Low"
+        }
+    },
+    {
+        "timestamp": "2026-01-24T14:14:16.927450",
+        "patient_data": {
+            "gender": "Male",
+            "age": 60.0,
+            "hypertension": 1,
+            "heart_disease": 0,
+            "smoking_history": "current",
+            "bmi": 34.0,
+            "HbA1c_level": 8.9,
+            "blood_glucose_level": 123.0
+        },
+        "risk_assessment": {
+            "score": 0.9995207913671948,
+            "level": "High"
+        }
+    },
+    {
+        "timestamp": "2026-01-24T16:08:17.937933",
+        "patient_data": {
+            "gender": "Female",
+            "age": 67.0,
+            "hypertension": 1,
+            "heart_disease": 0,
+            "smoking_history": "current",
+            "bmi": 25.0,
+            "HbA1c_level": 7.7,
+            "blood_glucose_level": 123.0
+        },
+        "risk_assessment": {
+            "score": 0.9995199426163756,
+            "level": "High"
+        }
+    },
+    {
+        "timestamp": "2026-01-24T16:10:48.122565",
+        "patient_data": {
+            "gender": "Male",
+            "age": 56.0,
+            "hypertension": 0,
+            "heart_disease": 1,
+            "smoking_history": "former",
+            "bmi": 34.0,
+            "HbA1c_level": 6.6,
+            "blood_glucose_level": 100.0
+        },
+        "risk_assessment": {
+            "score": 0.012036145705749785,
+            "level": "Low"
+        }
     }
 ]
