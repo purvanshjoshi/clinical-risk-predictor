@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { simulateRisk, type PredictionInput, type SimulationResponse } from '../api/client';
-import { RefreshCcw, ArrowRight } from 'lucide-react';
+import { simulateRisk, generateSimulationReport, type PredictionInput, type SimulationResponse } from '../api/client';
+import { RefreshCcw, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
 import { debounce } from 'lodash';
 
 interface SimulationDashboardProps {
@@ -17,6 +17,28 @@ const SimulationDashboard: React.FC<SimulationDashboardProps> = ({ originalData 
 
     const [simulationResult, setSimulationResult] = useState<SimulationResponse | null>(null);
     const [isSimulating, setIsSimulating] = useState(false);
+
+    // AI Report State
+    const [aiReport, setAiReport] = useState<string | null>(null);
+    const [loadingAi, setLoadingAi] = useState(false);
+
+    const handleAnalyzeScenario = async () => {
+        if (!simulationResult) return;
+        setLoadingAi(true);
+        try {
+            const backendMods: Record<string, any> = {};
+            if (modifications.bmi !== 0) backendMods.bmi = originalData.bmi + modifications.bmi;
+            if (modifications.HbA1c_level !== 0) backendMods.HbA1c_level = originalData.HbA1c_level + modifications.HbA1c_level;
+            if (modifications.blood_glucose_level !== 0) backendMods.blood_glucose_level = originalData.blood_glucose_level + modifications.blood_glucose_level;
+
+            const result = await generateSimulationReport(originalData, backendMods);
+            setAiReport(result.report);
+        } catch (error) {
+            console.error("AI Analysis failed", error);
+        } finally {
+            setLoadingAi(false);
+        }
+    };
 
     // Debounced simulation call
     const runSimulation = useCallback(
@@ -47,6 +69,7 @@ const SimulationDashboard: React.FC<SimulationDashboardProps> = ({ originalData 
     );
 
     useEffect(() => {
+        setAiReport(null); // Clear old report on change
         runSimulation(modifications);
     }, [modifications, runSimulation]);
 
@@ -165,6 +188,30 @@ const SimulationDashboard: React.FC<SimulationDashboardProps> = ({ originalData 
 
                             <div className="bg-green-50 text-green-700 p-3 rounded-lg text-center text-sm font-medium border border-green-200">
                                 Projected Risk Reduction: {(simulationResult.risk_reduction * 100).toFixed(1)}%
+                            </div>
+
+                            {/* AI Analysis Button */}
+                            <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+                                {!aiReport ? (
+                                    <button
+                                        onClick={handleAnalyzeScenario}
+                                        disabled={loadingAi}
+                                        className="w-full flex items-center justify-center space-x-2 py-2 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50 rounded-lg transition-colors"
+                                    >
+                                        {loadingAi ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
+                                        <span>{loadingAi ? "Analyzing..." : "Analyze with BioMistral"}</span>
+                                    </button>
+                                ) : (
+                                    <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-100 dark:border-purple-800">
+                                        <div className="flex items-center space-x-2 mb-1 text-purple-700 dark:text-purple-300 font-semibold text-xs uppercase tracking-wide">
+                                            <Sparkles size={12} />
+                                            <span>AI Insight</span>
+                                        </div>
+                                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                                            {aiReport}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

@@ -95,7 +95,7 @@ const ClinicianDashboard: React.FC<ClinicianDashboardProps> = ({ prediction, pat
 
             {/* Simulation Section */}
             <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                <SimulationDashboard originalData={prediction as any} />
+                <SimulationDashboard originalData={patientInput} />
             </div>
         </div>
     );

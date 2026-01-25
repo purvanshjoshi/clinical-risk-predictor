@@ -26,4 +26,4 @@
 - [x] **Backend Port**: Fixed conflict (Moved to 8001).
 - [x] **Dockerization**: `Dockerfile` and `docker-compose.yml` created.
 - [x] **Documentation**: Updated `README.md` with new features and setup.
-- [ ] **Visual Polish**: Advanced animations (optional).
+- [x] **Visual Polish**: Advanced animations (AI-Powered Simulation).

@@ -117,3 +117,50 @@ Write a concise 1-paragraph clinical summary.
             return output.strip()
         except Exception as e:
             return f"Error during generation: {e}"
+
+    def generate_simulation_report(self, original_data: Dict[str, Any], modified_data: Dict[str, Any], original_risk: float, new_risk: float) -> str:
+        """
+        Generates a comparative report for a 'What-If' simulation.
+        """
+        if not self.model:
+            return "⚠️ Clinical LLM is not active. Report cannot be generated."
+
+        # Identify what changed
+        changes = []
+        for key, val in modified_data.items():
+            if val != original_data.get(key):
+                orig_val = original_data.get(key)
+                changes.append(f"- {key.replace('_', ' ').title()}: Changed from {orig_val} to {val}")
+        
+        changes_text = "\n".join(changes) if changes else "No specific changes detected."
+        risk_reduction_pct = (original_risk - new_risk) * 100
+
+        prompt = f"""
+### Instruction:
+You are an expert medical AI assistant. Analyze the result of a clinical simulation where a patient's risk factors were modified to see the impact on their health risk.
+
+**Patient Context:**
+- Age: {original_data.get('age')}
+- Gender: {original_data.get('gender')}
+
+**Simulation Results:**
+- Original Risk Score: {original_risk:.2f}
+- New Risk Score: {new_risk:.2f}
+- Absolute Risk Reduction: {risk_reduction_pct:.1f}%
+
+**Modifications Made:**
+{changes_text}
+
+**Task:**
+Write a short, motivating clinical explanation of WHY these specific changes led to a risk reduction.
+- Explain the medical benefit of the changes (e.g. creating lower blood glucose).
+- Provide positive reinforcement.
+- Keep it under 100 words.
+
+### Response:
+"""
+        try:
+            output = self.model.generate(prompt, max_tokens=150, temp=0.7)
+            return output.strip()
+        except Exception as e:
+            return f"Error during generation: {e}"

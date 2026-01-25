@@ -159,6 +159,33 @@ def simulate_risk(request: SimulationRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/simulate/report", response_model=ReportResponse)
+def generate_simulation_report(request: SimulationRequest):
+    if risk_engine is None:
+        raise HTTPException(status_code=503, detail="Risk Engine not ready")
+    if clinical_llm is None:
+         raise HTTPException(status_code=503, detail="Clinical LLM failed to load.")
+    
+    try:
+        # Calculate Risks
+        original_risk = risk_engine.predict_risk(request.patient.dict())
+        
+        # Calculate New Risk
+        cf = Counterfactuals(risk_engine)
+        result = cf.predict_simulation(request.patient.dict(), request.modifications)
+        new_risk = result['new_risk']
+        
+        # Generate Text
+        report = clinical_llm.generate_simulation_report(
+            request.patient.dict(), 
+            result['modified_data'], 
+            original_risk, 
+            new_risk
+        )
+        return {"report": report}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/report", response_model=ReportResponse)
 def generate_report(patient: PatientRequest):
     if risk_engine is None:

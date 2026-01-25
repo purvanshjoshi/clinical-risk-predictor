@@ -85,3 +85,14 @@ export const generateReport = async (patient: PredictionInput): Promise<ReportRe
     const response = await apiClient.post<ReportResponse>('/report', patient);
     return response.data;
 };
+
+export const generateSimulationReport = async (
+    patient: PredictionInput,
+    modifications: Record<string, any>
+): Promise<ReportResponse> => {
+    const response = await apiClient.post<ReportResponse>('/simulate/report', {
+        patient,
+        modifications
+    });
+    return response.data;
+};
