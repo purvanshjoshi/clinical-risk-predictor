@@ -298,6 +298,7 @@ flowchart TB
 
 ### Interaction Sequence
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryTextColor':'#000', 'actorTextColor':'#000', 'labelTextColor':'#000', 'loopTextColor':'#000', 'noteTextColor':'#000', 'activationBorderColor':'#666', 'activationBkgColor':'#f4f4f4'}}}%%
 sequenceDiagram
     autonumber
     actor Clinician as 👨‍⚕️ Clinician
