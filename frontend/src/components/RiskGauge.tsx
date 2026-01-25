@@ -29,8 +29,7 @@ const RiskGauge: React.FC<RiskGaugeProps> = ({ riskScore }) => {
     const oR = 100;
 
     return (
-        <div className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-lg border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">Risk Probability</h3>
+        <div className="flex flex-col items-center justify-center h-full w-full">
             <div className="h-48 w-full relative">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>

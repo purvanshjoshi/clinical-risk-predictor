@@ -1,0 +1,13 @@
+INFO:     Started server process [26008]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [26008]
+CohortEngine: Loaded 100992 records for cohort analysis.
+Risk Engine loaded successfully.
+Error initializing Clinical LLM: 'charmap' codec can't encode character '\U0001f9e0' in position 0: character maps to <undefined>
+History Engine initialized.
+PDF Service initialized.

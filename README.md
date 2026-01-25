@@ -85,28 +85,36 @@ graph TD
     Client[Client Browser]
     subgraph Frontend [React Frontend]
         UI[Clinician Dashboard]
+        Components[Risk Gauge, Trend Chart, Cohort Card]
         API_Client[API Client]
     end
     subgraph Backend [FastAPI Backend]
-        API[API Endpoints]
+        API[API Gateway]
         RiskEng["Risk Engine (XGBoost)"]
+        CohortEng["Cohort Engine (Nearest Neighbors)"]
         SHAP["SHAP Explainer"]
         subgraph EmbeddedAI [Embedded AI]
            GPT4All["GPT4All Engine"]
            BioMistral["BioMistral-7B Model"]
         end
         History["History Engine (SQLite)"]
+        PDF["PDF Service (FPDF2)"]
+        FHIR["FHIR Converter (R4)"]
     end
     
     Client --> UI
-    UI --> API_Client
+    UI --> Components
+    Components --> API_Client
     API_Client -->|JSON| API
     API --> RiskEng
     RiskEng --> SHAP
+    API --> CohortEng
     API --> EmbeddedAI
     EmbeddedAI --> GPT4All
     GPT4All --> BioMistral
     API --> History
+    API --> PDF
+    API --> FHIR
 ```
 
 ### Data Flow

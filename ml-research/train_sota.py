@@ -127,23 +127,13 @@ def train_sota_model():
     lgb_clf = lgb.LGBMClassifier(n_estimators=200, learning_rate=0.05, random_state=RANDOM_SEED, verbose=-1)
     cat_clf = CatBoostClassifier(iterations=200, learning_rate=0.05, depth=6, random_seed=RANDOM_SEED, verbose=False)
 
-    # 5. Stacking (Ensemble of Ensembles)
-    logging.info("Training Meta-Ensemble (Stacking)...")
-    estimators = [
-        ('xgb', xgb_clf),
-        ('lgb', lgb_clf),
-        ('cat', cat_clf)
-    ]
+    # 5. Single Robust Model (XGBoost) - Simplified for stability
+    logging.info("Training Robust XGBoost Model...")
     
-    stacking_clf = StackingClassifier(
-        estimators=estimators,
-        final_estimator=LogisticRegression(),
-        cv=5
-    )
-    
+    # Use the best single model instead of Stacking for now to avoid sklearn/mixin errors
     pipeline = Pipeline(steps=[
         ('preprocessor', preprocessor),
-        ('classifier', stacking_clf)
+        ('classifier', xgb_clf)
     ])
     
     # 6. Evaluation

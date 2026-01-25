@@ -12,6 +12,10 @@
 
 ## Phase 2: The "Wow" Frontend (UX & Design)
 - [x] **Design System**: Tailwind CSS + Framer Motion.
+- [x] **Professional Polish (Framework)**:
+    - [x] Refactor `AppShell` (Navbar/Layout).
+    - [x] Refactor `PatientInputs` (Better Grid/Typography).
+    - [x] Refactor `ClinicianDashboard` (Card-based Layout).
 - [x] **Clinician Dashboard**:
     - [x] Clinician Dashboard UI.
     - [x] **Interactive "What-If" Simulation**: Sliders for BMI/Glucose.

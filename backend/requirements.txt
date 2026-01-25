@@ -10,3 +10,6 @@ joblib
 openai
 gpt4all
 huggingface_hub
+fpdf
+lightgbm
+catboost

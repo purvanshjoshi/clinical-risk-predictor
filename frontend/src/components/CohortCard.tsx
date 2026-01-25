@@ -41,12 +41,7 @@ const CohortCard: React.FC<CohortCardProps> = ({ patientData }) => {
     );
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-100 dark:border-gray-700 animate-fade-in-up">
-            <div className="flex items-center space-x-2 mb-4 text-purple-600 dark:text-purple-400">
-                <Users size={24} />
-                <h3 className="text-xl font-bold text-gray-800 dark:text-white">Cohort Intelligence</h3>
-            </div>
-
+        <div className="h-full">
             <div className="space-y-6">
                 {/* Percentiles */}
                 {analysis && (

@@ -79,17 +79,7 @@ const SimulationDashboard: React.FC<SimulationDashboardProps> = ({ originalData 
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 dark:bg-gray-800 dark:border-gray-700 mt-8">
-            <div className="flex items-center space-x-2 mb-6">
-                <div className="p-2 bg-purple-100 rounded-lg dark:bg-purple-900/30">
-                    <RefreshCcw className="text-purple-600 dark:text-purple-400" size={20} />
-                </div>
-                <div>
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white">"What-If" Analysis</h3>
-                    <p className="text-sm text-gray-500">Simulate health improvements to reduce risk.</p>
-                </div>
-            </div>
-
+        <div className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Sliders */}
                 <div className="space-y-6">

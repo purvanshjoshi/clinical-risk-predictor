@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { getHistory, type HistoryResponse } from '../api/client';
-import { Activity } from 'lucide-react';
+
 
 const TrendAnalysis: React.FC = () => {
     const [data, setData] = useState<HistoryResponse | null>(null);
@@ -32,26 +32,7 @@ const TrendAnalysis: React.FC = () => {
     }));
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
-            <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center space-x-2">
-                    <Activity className="text-blue-600 dark:text-blue-400" size={24} />
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white">Longitudinal Risk Velocity</h3>
-                </div>
-                {data.trend_analysis && (
-                    <div className={`px-3 py-1 rounded-full text-sm font-medium ${data.trend_analysis.status.includes('Critical') ? 'bg-red-100 text-red-700' :
-                        data.trend_analysis.status.includes('Warning') ? 'bg-yellow-100 text-yellow-800' :
-                            data.trend_analysis.status.includes('Positive') ? 'bg-green-100 text-green-700' :
-                                'bg-gray-100 text-gray-700'
-                        }`}>
-                        {data.trend_analysis.status}
-                        <span className="ml-2 text-xs opacity-75">
-                            (v={data.trend_analysis.velocity})
-                        </span>
-                    </div>
-                )}
-            </div>
-
+        <div className="h-full w-full">
             <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData}>
