@@ -283,11 +283,11 @@ flowchart TB
     %% Data Access
     Ensemble -.->|"Load Model"| Models
     
-    classDef userStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-    classDef frontendStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef apiStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px
-    classDef processStyle fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-    classDef dataStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef userStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef frontendStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef apiStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+    classDef processStyle fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef dataStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
     
     class Clinician,Browser userStyle
     class InputForm,Dashboard,SimUI frontendStyle
