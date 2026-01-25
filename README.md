@@ -111,13 +111,13 @@ graph TD
         end
         
         subgraph GenAI [Generative Intelligence]
-            LLM[BioMistral-7B (GGUF)]
+            LLM["BioMistral-7B (GGUF)"]
             Prompt[Clinical Prompt Eng.]
         end
         
         subgraph DataLayer [Data Persistence]
-            History[(History.json / SQLite)]
-            CohortDB[(Population Dataset)]
+            History[("History.json / SQLite")]
+            CohortDB[("Population Dataset")]
         end
         
         PDF[PDF Report Generator]
