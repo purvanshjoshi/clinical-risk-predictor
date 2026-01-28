@@ -8,7 +8,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import VotingClassifier
+from sklearn.ensemble import VotingClassifier, RandomForestClassifier
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.metrics import brier_score_loss, roc_auc_score
 from sklearn.utils.class_weight import compute_class_weight
@@ -30,17 +30,29 @@ def load_data(path):
 
 def preprocess_features(df):
     """
-    Custom feature engineering.
+    Advanced feature engineering for maximum performance.
     """
     df_clean = df.copy()
     
-    # Feature Engineering: BMI * Age
+    # Interaction: BMI * Age
     if 'bmi' in df_clean.columns and 'age' in df_clean.columns:
         df_clean['BMI_Age_Interaction'] = df_clean['bmi'] * df_clean['age']
     
-    # Feature Engineering: Glucose * HbA1c (both are diabetes indicators)
+    # Interaction: Glucose * HbA1c
     if 'blood_glucose_level' in df_clean.columns and 'HbA1c_level' in df_clean.columns:
         df_clean['Glucose_HbA1c_Interaction'] = df_clean['blood_glucose_level'] * df_clean['HbA1c_level']
+    
+    # Age Categories (risk zones)
+    if 'age' in df_clean.columns:
+        df_clean['Age_Category'] = pd.cut(df_clean['age'], 
+                                          bins=[0, 30, 45, 60, 100],
+                                          labels=['Young', 'Middle', 'Senior', 'Elderly'])
+    
+    # BMI Categories (WHO classification)
+    if 'bmi' in df_clean.columns:
+        df_clean['BMI_Category'] = pd.cut(df_clean['bmi'],
+                                          bins=[0, 18.5, 25, 30, 100],
+                                          labels=['Underweight', 'Normal', 'Overweight', 'Obese'])
     
     return df_clean
 
@@ -82,7 +94,7 @@ def train_model():
     
     # 4. Define Preprocessing Pipeline
     # Identify column types
-    categorical_features = ['gender', 'smoking_history']
+    categorical_features = ['gender', 'smoking_history', 'Age_Category', 'BMI_Category']
     numeric_features = ['age', 'hypertension', 'heart_disease', 'bmi', 'HbA1c_level', 'blood_glucose_level', 'BMI_Age_Interaction', 'Glucose_HbA1c_Interaction']
     
     # Verify columns exist
@@ -106,28 +118,41 @@ def train_model():
 
     # 5. Define Models with Class Weights
     xgb_clf = xgb.XGBClassifier(
-        n_estimators=150,  # Increased from 100
-        max_depth=4,  # Increased from 3 for more complex patterns
-        learning_rate=0.1,
-        min_child_weight=1,  # Add to prevent overfitting
-        subsample=0.8,  # Add to prevent overfitting
-        colsample_bytree=0.8,  # Add to prevent overfitting
-        scale_pos_weight=scale_pos_weight,  # Add class weight
+        n_estimators=200,  # Increased from 150
+        max_depth=5,  # Increased from 4 for even more complex patterns
+        learning_rate=0.08,  # Slightly reduced for better generalization
+        min_child_weight=1,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        gamma=0.1,  # Add regularization
+        scale_pos_weight=scale_pos_weight,
         use_label_encoder=False,
         eval_metric='logloss',
         random_state=RANDOM_SEED
     )
     
     lr_clf = LogisticRegression(
-        C=1.0, 
-        class_weight='balanced',  # Add class weight
+        C=0.8,  # Slightly more regularization
+        class_weight='balanced',
         random_state=RANDOM_SEED, 
         max_iter=1000
     )
     
+    # Add Random Forest for diversity
+    rf_clf = RandomForestClassifier(
+        n_estimators=100,
+        max_depth=10,
+        min_samples_split=5,
+        min_samples_leaf=2,
+        class_weight='balanced',
+        random_state=RANDOM_SEED,
+        n_jobs=-1
+    )
+    
     voting_clf = VotingClassifier(
-        estimators=[('xgb', xgb_clf), ('lr', lr_clf)],
-        voting='soft'
+        estimators=[('xgb', xgb_clf), ('lr', lr_clf), ('rf', rf_clf)],
+        voting='soft',
+        weights=[2, 1, 1.5]  # Give more weight to XGBoost and RF
     )
     
     calibrated_clf = CalibratedClassifierCV(
@@ -138,7 +163,7 @@ def train_model():
     
     # 6. Create Pipeline with SMOTE
     print(f"\nApplying SMOTE to balance classes...")
-    smote = SMOTE(sampling_strategy=0.75, random_state=RANDOM_SEED)  # Increase minority class to 75% of majority
+    smote = SMOTE(sampling_strategy=0.9, random_state=RANDOM_SEED)  # Increase minority class to 90% of majority
     
     # Use imblearn Pipeline to include SMOTE
     pipeline = ImbPipeline(steps=[
