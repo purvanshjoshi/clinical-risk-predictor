@@ -18,7 +18,7 @@
     "@tailwindcss/postcss": "^4.3.3",
     "@types/howler": "^2.2.12",
     "@types/lodash": "^4.17.23",
-    "@types/three": "^0.182.0",
+    "@types/three": "^0.185.4",
     "axios": "^1.13.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.27.5",
