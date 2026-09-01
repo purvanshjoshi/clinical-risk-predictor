@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.5.0",
+    "@react-three/fiber": "^9.7.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/howler": "^2.2.12",
     "@types/lodash": "^4.17.23",
