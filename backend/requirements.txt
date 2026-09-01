@@ -9,7 +9,7 @@ xgboost>=3.4.1
 joblib>=1.5.3
 openai
 gpt4all>=2.8.2
-huggingface_hub>=1.28.0
+huggingface_hub>=1.29.0
 fpdf
 lightgbm
 catboost
