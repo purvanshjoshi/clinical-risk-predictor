@@ -6,7 +6,7 @@ pandas>=3.0.5
 numpy>=2.5.2
 shap>=0.52.0
 xgboost>=3.4.1
-joblib>=1.5.3
+joblib>=1.6.0
 openai
 gpt4all>=2.8.2
 huggingface_hub>=1.29.0
