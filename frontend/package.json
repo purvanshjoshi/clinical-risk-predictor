@@ -24,7 +24,7 @@
     "framer-motion": "^12.27.5",
     "howler": "^2.2.4",
     "lodash": "^4.17.23",
-    "lucide-react": "^1.31.0",
+    "lucide-react": "^1.45.0",
     "maath": "^0.10.8",
     "react": "^19.2.0",
     "react-dom": "^19.2.8",
