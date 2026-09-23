@@ -21,7 +21,7 @@
     "@types/three": "^0.186.0",
     "axios": "^1.13.2",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.27.5",
+    "framer-motion": "^13.4.0",
     "howler": "^2.2.4",
     "lodash": "^4.17.23",
     "lucide-react": "^1.45.0",
